@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Demander de Cotation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Styles du message de confirmation */
+    #form-message {
+      margin-top: 15px;
+      font-size: 14px;
+      font-weight: bold;
+      display: none;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    #form-message.success {
+      color: #155724;
+      background: #d4edda;
+      border: 1px solid #c3e6cb;
+    }
+    #form-message.error {
+      color: #721c24;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-header">
+      DEMANDER DE COTATION
+      <div class="close-btn">X</div>
+    </div>
+
+    <!-- Formulaire relié à Formspree -->
+    <form id="cotForm" action="https://formspree.io/f/mrblwawd" method="POST">
+      <input type="hidden" name="_to" value="pnotard@gmail.com">
+
+      <div class="form-group">
+        <label for="nom">Nom</label>
+        <input type="text" id="nom" name="nom" placeholder="Votre nom & prénoms" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Adresse Email</label>
+        <input type="email" id="email" name="email" placeholder="Votre adresse email" required>
+      </div>
+
+      <div class="form-group">
+        <label for="telephone">Téléphone</label>
+        <input type="tel" id="telephone" name="telephone" placeholder="Votre numéro de téléphone" required>
+      </div>
+
+      <div class="form-group">
+        <label for="modele">Modèles</label>
+        <select id="modele" name="modele" required>
+          <option value="">-- Sélectionnez un modèle --</option>
+          <option>NEW ALTO</option>
+          <option>S-PRESSO</option>
+          <option>CELERIO</option>
+          <option>BALENO</option>
+          <option>SWIFT</option>
+          <option>DZIRE</option>
+          <option>CIAZ</option>
+          <option>ERTIGA</option>
+          <option>FRONX</option>
+          <option>GRAND VITARA</option>
+          <option>JIMNY 3 PORTES</option>
+          <option>JIMNY 5 PORTES</option>
+          <option>EECO</option>
+          <option>SUPER CARRY</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="commentaire">Commentaire (Facultatif)</label>
+        <textarea id="commentaire" name="commentaire" placeholder="Entrez votre message ici..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn">ENVOYER</button>
+    </form>
+
+    <!-- Zone d'affichage du message -->
+    <div id="form-message"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("cotForm");
+    const messageBox = document.getElementById("form-message");
+
+    form.addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      // Reset message
+      messageBox.style.display = "none";
+      messageBox.className = "";
+      messageBox.innerText = "";
+
+      try {
+        const response = await fetch(form.action, {
+          method: "POST",
+          body: new FormData(form),
+          headers: { "Accept": "application/json" }
+        });
+
+        if (response.ok) {
+          messageBox.innerText = "✅ Merci, votre demande a été envoyée avec succès !";
+          messageBox.className = "success";
+          messageBox.style.display = "block";
+          form.reset();
+        } else {
+          const data = await response.json();
+          messageBox.innerText = data.error || "❌ Une erreur est survenue, merci de réessayer.";
+          messageBox.className = "error";
+          messageBox.style.display = "block";
+        }
+      } catch (error) {
+        messageBox.innerText = "❌ Impossible d’envoyer le formulaire. Vérifiez votre connexion.";
+        messageBox.className = "error";
+        messageBox.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
